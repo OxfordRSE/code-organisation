@@ -1,0 +1,29 @@
+* Introduction
+** The goal of this course is to learn how to organise code. By "organise", we mean how to split a long script or piece of code into functions and classes; how to collect those functions and classes into different files; and how to adopt libraries of reusable functions.
+** The principle motivation is making your code easier to understand and change.
+** Secondary motivation is that we're promoting reuse; you'll see that identical code in many places in a script can be extracted into a single function, and that a file of useful functions can be shared between projects.
+** Finally by introducing the idea of using other libraries, we aim to reduce the amount of code you have to write and thus the time spent maintaining and fixing it.
+* Designing Organised Code
+** We need to know what we're aiming for.
+** Duplication is bad, because when we have to change something we're going to have to change it in multiple places, and we might miss some.
+** But we don't just arbitrarily look for duplicate code and break it up.
+*** Cohesion - does this function, or class, do a single thing? Are its parts (subroutines/methods) clearly related? Is it the _only_ place I have to look to see how this thing is done? Aim for designs the increase cohesion.
+*** Coupling - does this function make changes to an unrelated part of the program? Does it some distant structure to be set up, or some other calls to be made in exactly the right order, before it can be used? Aim for designs that reduce coupling.
+*** Value - will I get anything from separating this out - easier to understand, easier to change, easier to reuse? Does that value outweigh the risk of breaking things when I make changes? (Hint; version control and tests!)
+*** Non-consideration: performance. It's almost always more valuable to have a readable function than to shave a few nanoseconds of function call off your runtime.
+* Organising Existing Code
+** We'll explain how to do it the long-winded way, but look for a code editor or IDE that can do it automatically.
+** Need examples here!
+** Case One: break long script into separate procedures/routines
+*** Identify the distinct high-level "steps" in the script, perhaps draw a flowchart
+*** Pick one of these "steps". Identify the data it consumes (i.e. what flows in) and the results it produces (i.e. what flows out), and define a procedure/function that has the same inputs and outputs. Note that if you use "global variables" in the script, you should make them parameters to the procedure where possible.
+*** if the inputs or (especially) outputs are complex, consider defining structures or classes to keep related parts together.
+*** copy the procedure from the script into the definition, and fix up any changes needed e.g. making variable names match the parameters in the procedure.
+*** remove the statements from the script and replace with a call to the new procedure.
+*** test!
+** Case Two: replacing duplicate code with procedures
+*** Identify the duplicate code, and its purpose
+*** Is it really duplicate? Are there differences in how values are handled, or in particular operations?
+*** Is there code that _could_ be duplicate, but that coincidentally uses e.g. different filesystem routines or the same operations in different orders?
+*** Follow the steps in "case one" to replace one of the instances.
+*** Now replace the second (and third...)

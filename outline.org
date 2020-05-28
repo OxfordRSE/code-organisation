@@ -9,8 +9,16 @@
 ** But we don't just arbitrarily look for duplicate code and break it up.
 *** Cohesion - does this function, or class, do a single thing? Are its parts (subroutines/methods) clearly related? Is it the _only_ place I have to look to see how this thing is done? Aim for designs the increase cohesion.
 *** Coupling - does this function make changes to an unrelated part of the program? Does it some distant structure to be set up, or some other calls to be made in exactly the right order, before it can be used? Aim for designs that reduce coupling.
+**** Types of coupling from Code Complete 2:
+***** simple data parameters (this module calls a function from that module, passing int, string etc)
+***** simple object coupling (this module creates an instance of that object)
+***** object-parameter coupling (this module needs that module to pass it an instance of this third object)
+***** control flag coupling
+***** temporal coupling via global data
+***** relying on behaviour that isn't explicit in the contract (i.e. documentation and tests), whether in behaviour or in data
 *** Value - will I get anything from separating this out - easier to understand, easier to change, easier to reuse? Does that value outweigh the risk of breaking things when I make changes? (Hint; version control and tests!)
 *** Non-consideration: performance. It's almost always more valuable to have a readable function than to shave a few nanoseconds of function call off your runtime.
+** We need to introduce the concept of "smells" at this point: there's no hard limit on the length of a function, or amount of coupling, etc., just a sense that things could be better
 * Organising Existing Code
 ** We'll explain how to do it the long-winded way, but look for a code editor or IDE that can do it automatically.
 ** Need examples here!
@@ -24,6 +32,23 @@
 ** Case Two: replacing duplicate code with procedures
 *** Identify the duplicate code, and its purpose
 *** Is it really duplicate? Are there differences in how values are handled, or in particular operations?
+*** Antipattern: it's generally not a good idea to deduplicate two "almost-the-same" code blocks into one procedure with a switch telling it to do version 1 or 2, because that's just as hard to understand.
 *** Is there code that _could_ be duplicate, but that coincidentally uses e.g. different filesystem routines or the same operations in different orders?
 *** Follow the steps in "case one" to replace one of the instances.
-*** Now replace the second (and third...)
+*** Now replace the second (and third...) invocations.
+* Using multiple files
+** You've probably now broken a big script into...another big script that has lots of functions or procedures in.
+** Identify clusters of related functions and separate them into files. You have less code to read when you want to find a specific thing to change, and you can take these files and use them in other projects \o/
+** Use your language's import/include/using mechanism to get them back again (very different examples: Python, C++)
+** Now you know how to do this, you can use other people's code and shrink your scripts even further
+*** describe package repositories: example of pypi, CRAN
+*** make sure to control what version of the package you get
+*** fetching and using somebody's package
+* Functional programming
+** While many languages call any sequence of instructions a "function", there's a mathematical meaning
+** A function transforms its inputs into its output without relying on external state or making other changes
+** Benefits: much easier to understand, because all of the behaviour is described by the code in front of you. Easier to change or even replace without worrying over surprising consequences.
+* Object-oriented programming
+** Related procedures that all act on the same data can be collected into a "class" which describes a prototype of those data, and the ways the procedures work on it.
+** Benefits: data use across procedures can be made consistent; any validation or other interaction between the procedures can be encapsulated in the class; data can be restricted to those procedures so no other changes happen.
+

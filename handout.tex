@@ -7,7 +7,7 @@
 \section{Introduction}
 You may well have encountered problems associated with developing code with no structure in mind. When all of your program is in a single file it becomes hard to find the part you need to change to fix a bug. When you do make a change, it's difficult to understand all of the ramifications of that change, and whether you have changed everything that needs updating.
 
-In this course, you'll learn some basics of code organisation. Firstly you'll learn about some concepts that software engineers use when thinking about how to find parts of a big chunk of code to break out into separate routines, procedures or functions. Then you'll be given practical steps to apply those concepts and organise your code.
+In this course, you'll learn some basics of code organisation. Firstly you'll learn about some concepts that software engineers use when thinking about how to find parts of a big chunk of code to break out into separate routines, procedures or functions (for the most part, those are words that we're using interchangably in this handout). Then you'll be given practical steps to apply those concepts and organise your code.
 
 With code organised into distinct functions that serve different purposes, you will then learn to separate these functions out into their own files, and import them where you need to use them. This lets you reuse the same functions across different projects, increasing the impact of your software and your efficiency as a programmer.
 
@@ -17,6 +17,18 @@ All of the examples in this handout use the Python programming language.
 
 \section{Designing Well-Organised Software}
 
+There are no hard-and-fast rules in code organisation, so we can't just teach you something like ``split every ten instructions into their own function''. What we'll do is show you the the goals we have and the principles we follow to support those goals. Apply those principles to organising your own projects.
 
+\subsection{Reduce duplication}
+
+A good rule of thumb in organising your code is to reduce the number of times you describe the same procedure or algorithm to the computer. The more times you duplicate the same instructions in your software, the more chances there are that one of them can be erroneous. This is particularly true when you come to make changes. If there are, for example, three places where you define the routine for reading input files, and only remember to update two of them, then your software will exhibit inconsistent behaviour depending on which is used.
+
+On the other hand, if these three routines are replaced by three calls to a single shared procedure, then all three will get the new behaviour whenever you update the routine. Additionally, this procedure can be used in other contexts where the same input files will be read.
+
+\subsection {Create cohesive routines}
+
+We don't greedily look for duplicated segments of code and split them into routines. The components of our software need to have \textit{cohesion}. By this we mean that they need to have identifiable purposes and behaviour. A procedure that reads data from a \textsc{fits} file into an array can clearly be used in any program that needs to work with \textsc{fits} files. A procedure that reads data from a \textsc{fits} file into an array and writes the current time to the console is not as easy to work with.
+
+A convenient heuristic for measuring cohesion is ``do one thing well''. A function that does multiple things is not cohesive. A function that does a small part of something is not cohesive. This is hard to be absolutist about. What one person thinks of as a single function may be to another a small part of something useful, and to another a sequence of multiple steps. Depending on what you're trying to do, ``open a file for reading'' may be a task in itself, or a small part of ``read in the initial state of the simulation''. However, ``read the data in the middle third of the file'' is probably no use to anybody.
 
 \end{document}

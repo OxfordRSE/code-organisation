@@ -33,4 +33,32 @@ A convenient heuristic for measuring cohesion is ``do one thing well''. A functi
 
 What this amounts to is that there should be \textit{some} level of abstraction at which the function or routine you're creating can be seen to ``do one thing''. Going back to the example of reading a file, it is certainly true that ``open the file'' is a single operation. But if you put the sequence together ``open the file, create an array, read each line of the file into the array, close the file'', that could also be the recipe for a single operation ``read the input data''. And like any recipe, the order in which you perform the steps matter. Therefore this higher-level routine that is made of a specific sequence of other steps is itself a cohesive operation, so is a good candidate for being its own routine.
 
+\subsection {Remove unnecessary coupling}
+
+Two train carriages are coupled if they are joined by a connector, with the result that exerting a force on one of them causes the other to move. By analogy, two code functions are coupled if they are joined in such a way that trying to use one of them will have an effect on uses of the other.
+
+Sometimes coupling is necessary and even welcome: you can't close a file until you've opened it, for example, so open and close are coupled routines. In this case, the coupling is inherent in the problem being solved, which makes it easy to understand and perhaps even expected. The problems come when routines are coupled because of the way that they are implemented, but the coupling would not be expected based on an understanding of what the routine is supposed to do.
+
+This points to an important design principle in creating routines: you should be able to understand what a routine does based on its \textit{declaration} (its name, parameters, and documentation) without having to read its \textit{definition} (the list of statements in the routine). If you can, then that understanding stands in for reading a whole chunk of code and makes your program easier to follow.
+
+Surprising coupling frustrates that simplified understanding---it stops you from working out how a routine works without studying its implementation. If you can't calculate the Fourier Transform of a signal using a function called \texttt{calculateFourier()}, and the reason is that the transform routine doesn't work until you've set the printer into colour mode, you're going to have a frustrating time tracking down and fixing that problem. If at some point someone fixes that problem, and now you find that despite calculating a Fourier transform your printouts are still in monochrome, you have another problem to solve.
+
+Coupling also restricts reuse. If one routine is coupled to another, it can't be used in another project without bringing that other routine along too, and making the programmer use both in a supported way. If that second routine also has coupling to other parts of the code, they're also coming along for the ride.
+
+The book ``Code Complete, 2nd Edition'' by Steve McConnell\cite{cc2e} lists a few forms of coupling.
+
+\begin{itemize}
+\item Basic Parameter Coupling. A function calls another function, passing parameters like numbers and strings.
+\item Simple Object Coupling. A function creates, and uses, an instance of an object.
+\item Object-Parameter Coupling. A function calls another function, passing an instance of another object.
+\item Control Flag Coupling. A function passes a Boolean switch to another function, telling it how to work.
+\item Global Data Coupling. One function operates on data that has been modified by another function.
+\item Internal Behaviour Coupling. A function makes use of knowledge of the way another function works, beyond the expectations that could reasonably be derived from the function documentation.
+\end{itemize}
+
+McConnell suggests that the first two forms of coupling are innocuous, and the rest potentially problematic. More simply, greater coupling means more opaque operation and less chance for re-use, so our maxim for creating reusable routines can be ``high cohesiveness, low coupling''.
+
+\begin{thebibliography}{9}
+  \bibitem{cc2e} McConnell, Steve, \textit{Code Complete, 2nd Edition}. Microsoft Press, 2004.
+\end{thebibliography}
 \end{document}

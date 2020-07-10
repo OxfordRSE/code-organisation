@@ -1,4 +1,5 @@
 \documentclass[a4paper]{article}
+\usepackage{hyperref}
 \begin{document}
 \title{Code Organisation for Research Software}
 \author{Oxford Research Software Engineering Group}
@@ -58,7 +59,16 @@ The book ``Code Complete, 2nd Edition'' by Steve McConnell\cite{cc2e} lists a fe
 
 McConnell suggests that the first two forms of coupling are innocuous, and the rest potentially problematic. More simply, greater coupling means more opaque operation and less chance for re-use, so our maxim for creating reusable routines can be ``high cohesiveness, low coupling''.
 
+\subsection{Remove ``smells''}
+
+Notice in the last section that McConnell said that the forms of coupling identified were \emph{potentially} problematic. There are no hard and fast rules in design, which is a combination of engineering principles and aesthetics. There is no algorithm I can give you for good software design, and no quantitative metric. I can say that you should avoid global variables, but I can also say that you should avoid contorting your code until it's unreadable in the name of excising a global variable.
+
+I could tell you to prefer short functions, but also to prefer making your algorithms explicit and obvious even where that makes functions longer. That means I can't just say ``ten lines per function, and no more''. Reduce coupling, but don't decouple two things that clearly belong together. And so on.
+
+Software engineers talk about code ``smells''\cite{chsmell}. The idea is that something that smells weird isn't necessarily wrong, but definitely warrants further investigation. Good code organisation removes smells, either by fixing the cause of the smell (e.g. reorganising a long function into several shorter ones) or by justifying the existing organisation clearly enough that any concerns are assuaged. That justification can come in the form of an intuitive interface that makes it obvious how to use the functions, and documentation that explains the design choices made and why alternatives were rejected.
+
 \begin{thebibliography}{9}
   \bibitem{cc2e} McConnell, Steve, \textit{Code Complete, 2nd Edition}. Microsoft Press, 2004.
+  \bibitem{chsmell} Attwood, Jeff, \textit{Code Smells}. \url{https://blog.codinghorror.com/code-smells/}, accessed 2020--07--10.
 \end{thebibliography}
 \end{document}

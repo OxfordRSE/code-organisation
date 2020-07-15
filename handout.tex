@@ -120,6 +120,29 @@ Software engineers talk about code ``smells''\cite{chsmell}. The idea is that so
 
 In this section, we'll take a small program written in Python and and re-organise it to improve readability. The code models the incidence of a highly-transmissible disease through a University population; a timely example when this was written. Each of the sections explores a different aspect of the program and suggests an improving change. The original source can be seen in Appendix \ref{code-appendix}; the final version on Github at \url{https://github.com/OxfordRSE/covid-19-model}.
 
+\subsection{Break a Long Script Into Distinct Procedures}
+
+Apart from a few \texttt{import} statements and the \texttt{deriv} function defined at line 30, the script does everything at the top level: setting up some constants, the initial conditions of the simulation, running the simulation, then plotting the results and saving an image of the graphs. A first step is to break this into separate functions, so that it's easier to see how each step is implemented and so that we can use the code in other contexts (for example, rendering a table of results instead of a graph).
+
+Look for a meaningful step in the process to split out, no matter its size. You can give the resulting procedure a name that explains its purpose, and that procedure is likely only usable in its original context. If you were instead to pick some threshold number of statements, say 10, and break the code every 10 statements, you would have procedures with no independent capability outside the original recipe and it would be hard to identify what each does.
+
+As an example, take the initialisation of the population in Appendix \ref{code-appendix}. It's only a few lines: lines 19-23, and line 39. It's a bit of a ``code smell'' that the last line isn't with the rest of the initialisation, so replace all of those lines with a single function.
+
+\begin{lstlisting}[language=Python]
+def initial_population():
+    """initial number of infected and recovered individuals"""
+    e_initial = n/N
+    i_initial = 0.00
+    r_initial = 0.00
+    s_initial = 1 - e_initial - i_initial - r_initial
+    return s_initial, e_initial, i_initial, r_initial
+
+x_initial = initial_population()
+\end{lstlisting}
+
+Now it's clearer that \texttt{x\_initial} gets its values from the initialisation code. Notice that I also turned the comment into a Python ``doc string'', so that it's available in Python's interactive help.
+
+
 \begin{appendices}
 \section{Original Simulation Code\label{code-appendix}}
 

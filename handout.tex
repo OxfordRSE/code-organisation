@@ -142,6 +142,26 @@ x_initial = initial_population()
 
 Now it's clearer that \texttt{x\_initial} gets its values from the initialisation code. Notice that I also turned the comment into a Python ``doc string'', so that it's available in Python's interactive help.
 
+When splitting out these functions it's important to look at what data goes into and out of the block of code you're extracting, and ensure that the function you create has parameters for all the inputs and returns the appropriate output. To extract the main equation solver of this model (lines 42 and 43 in the original script), we need to ensure that the initial population, times, and the simulation parameters are available. The function must return the populations in both cases, where social distancing is not applied and where it is 40\% effective.
+
+\begin{lstlisting}[language=Python]
+def simulate_infection(derivative_function, initial_population, times, social_distance_effectivess, alpha, beta, gamma):
+    with_distancing = odeint(derivative_function, initial_population, times, args=(social_distance_effectivess, alpha, beta, gamma)).T
+    without_distancing = odeint(derivative_function, initial_population, times, args=(0, alpha, beta, gamma)).T
+    return with_distancing, without_distancing
+\end{lstlisting}
+
+Doing the same with the other parts of the simulation turns the main body of the script into this:
+
+\begin{lstlisting}[language=Python]
+parameters = simulation_parameters()
+x_initial = initial_population(parameters)
+(with_distancing, without_distancing) = simulate_infection(deriv, x_initial, parameters)
+figure = plot_infection_rates(parameters, with_distancing, without_distancing)
+save_png(figure, 'covid-19')
+\end{lstlisting}
+
+To my mind that makes it clearer to see what the program does, and where to look to modify any of its behaviour.
 
 \begin{appendices}
 \section{Original Simulation Code\label{code-appendix}}

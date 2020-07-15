@@ -1,5 +1,54 @@
 \documentclass[a4paper]{article}
 \usepackage{hyperref}
+\usepackage{appendix}
+\usepackage{color}
+\usepackage{listings}
+\usepackage{setspace}
+\definecolor{Code}{rgb}{0,0,0}
+\definecolor{Decorators}{rgb}{0.5,0.5,0.5}
+\definecolor{Numbers}{rgb}{0.5,0,0}
+\definecolor{MatchingBrackets}{rgb}{0.25,0.5,0.5}
+\definecolor{Keywords}{rgb}{0,0,1}
+\definecolor{self}{rgb}{0,0,0}
+\definecolor{Strings}{rgb}{0,0.63,0}
+\definecolor{Comments}{rgb}{0,0.63,1}
+\definecolor{Backquotes}{rgb}{0,0,0}
+\definecolor{Classname}{rgb}{0,0,0}
+\definecolor{FunctionName}{rgb}{0,0,0}
+\definecolor{Operators}{rgb}{0,0,0}
+\definecolor{Background}{rgb}{0.98,0.98,0.98}
+\lstdefinelanguage{Python}{
+numbers=left,
+numberstyle=\footnotesize,
+numbersep=1em,
+xleftmargin=1em,
+framextopmargin=2em,
+framexbottommargin=2em,
+showspaces=false,
+showtabs=false,
+showstringspaces=false,
+frame=l,
+tabsize=4,
+% Basic
+basicstyle=\ttfamily\small\setstretch{1},
+backgroundcolor=\color{Background},
+% Comments
+commentstyle=\color{Comments}\slshape,
+% Strings
+stringstyle=\color{Strings},
+morecomment=[s][\color{Strings}]{"""}{"""},
+morecomment=[s][\color{Strings}]{'''}{'''},
+% keywords
+morekeywords={import,from,class,def,for,while,if,is,in,elif,else,not,and,or,print,break,continue,return,True,False,None,access,as,,del,except,exec,finally,global,import,lambda,pass,print,raise,try,assert},
+keywordstyle={\color{Keywords}\bfseries},
+% additional keywords
+morekeywords={[2]@invariant,pylab,numpy,np,scipy},
+keywordstyle={[2]\color{Decorators}\slshape},
+emph={self},
+emphstyle={\color{self}\slshape},
+%
+}
+
 \begin{document}
 \title{Code Organisation for Research Software}
 \author{Oxford Research Software Engineering Group}
@@ -66,6 +115,17 @@ Notice in the last section that McConnell said that the forms of coupling identi
 I could tell you to prefer short functions, but also to prefer making your algorithms explicit and obvious even where that makes functions longer. That means I can't just say ``ten lines per function, and no more''. Reduce coupling, but don't decouple two things that clearly belong together. And so on.
 
 Software engineers talk about code ``smells''\cite{chsmell}. The idea is that something that smells weird isn't necessarily wrong, but definitely warrants further investigation. Good code organisation removes smells, either by fixing the cause of the smell (e.g. reorganising a long function into several shorter ones) or by justifying the existing organisation clearly enough that any concerns are assuaged. That justification can come in the form of an intuitive interface that makes it obvious how to use the functions, and documentation that explains the design choices made and why alternatives were rejected.
+
+\section{Organising Existing Code}
+
+In this section, we'll take a small program written in Python and and re-organise it to improve readability. The code models the incidence of a highly-transmissible disease through a University population; a timely example when this was written. Each of the sections explores a different aspect of the program and suggests an improving change. The original source can be seen in Appendix \ref{code-appendix}; the final version on Github at \url{https://github.com/OxfordRSE/covid-19-model}.
+
+\begin{appendices}
+\section{Original Simulation Code\label{code-appendix}}
+
+\lstinputlisting[language=Python]{original_code.py}
+
+\end{appendices}
 
 \begin{thebibliography}{9}
   \bibitem{cc2e} McConnell, Steve, \textit{Code Complete, 2nd Edition}. Microsoft Press, 2004.

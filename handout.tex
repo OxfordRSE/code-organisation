@@ -163,6 +163,45 @@ save_png(figure, 'covid-19')
 
 To my mind that makes it clearer to see what the program does, and where to look to modify any of its behaviour.
 
+\subsection{Replace Duplicated Code with Procedure}
+
+Where the same sequence of expressions occurs multiple times in a program, it's likely that there is a single concept being applied multiple times. ``Extracting'' the duplication by writing the duplicated statements into a function, and replacing all of the original duplicate instances with calls to the new function, has two important benefits.
+
+Firstly, by introducing a function, you give yourself the opportunity to name its action which wasn't available before. Readers of the code will find it easier to think about if they get to see what high-level ideas the code is performing, rather than having to work this out by understanding the sequence of expressions.
+
+Secondly, by ensuring that the algorithm or sequence is only written once in your code, you reduce the amount of work needed to maintain it, modify it, or fix bugs. If you had a sequence of instructions replicated five times across a script and found that it contained a bug, you would need to fix the bug in all five places. You might miss one, or you might get the fix wrong in some places. If the sequence is implemented in one place, fixing that single occurrence addresses problems everywhere it's used.
+
+In Appendix \ref{code-appendix} we see that lines 32 and 33 use the same complicated expression, and that this expression is fundamental to the mathematical expression of the infection model. It's important that this expression be correct and that the same expression be used in both places for the model to be consistent, so it's a good candidate to extract into a shared function. That function, and the changes to the \texttt{deriv} function that result from its use, look like this.
+
+\begin{lstlisting}[language=Python]
+def susceptible_becoming_exposed(social_distancing_effectiveness, t, t_social_distancing_start, beta, susceptible, infected):
+    return -(1-social_distancing_effectiveness*(1 if t >= 7 * t_social_distancing_start else 0)/100)*beta * susceptible * infected
+
+def deriv(x, t, params):
+    s, e, i, r = x
+    dsdt = susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i)
+    dedt =  -1 * susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i) - alpha * e
+    didt = alpha * e - gamma * i
+    drdt =  gamma * i
+    return [dsdt, dedt, didt, drdt]
+\end{lstlisting}
+
+In fact, looking at the resulting implementation of \texttt{deriv}, it's clear that there's a lot of interrelation between the four calculations, and that rather than exposing this interrelation, the code is hiding it by duplicating the calculations. This duplication can also be removed, in this case not by creating new functions but by introducing new variables to hold the intermediate results.
+
+\begin{lstlisting}[language=Python]
+def deriv(x, t, params):
+    s, e, i, r = x
+    exposed_becoming_infected = alpha * e
+    infected_becoming_recovered = gamma * i
+    dsdt = susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i)
+    dedt =  -1 * susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i) - exposed_becoming_infected
+    didt = exposed_becoming_infected - infected_becoming_recovered
+    drdt =  infected_becoming_recovered
+    return [dsdt, dedt, didt, drdt]
+\end{lstlisting}
+
+Now it looks clearer that, for example, the change in infected population over time depends on how exposed people become infected and how infected people recover, which lends credibility to the calculations. It doesn't matter so much that the script has become \emph{longer} with these modifications, because (to me, at least; remember that design is subjective) it's become \emph{clearer}.
+
 \begin{appendices}
 \section{Original Simulation Code\label{code-appendix}}
 

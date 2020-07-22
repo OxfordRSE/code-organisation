@@ -121,7 +121,7 @@ Software engineers talk about code ``smells''\cite{chsmell}. The idea is that so
 
 In this section, we'll take a small program written in Python and and re-organise it to improve readability. The code models the incidence of a highly-transmissible disease through a University population; a timely example when this was written. Each of the sections explores a different aspect of the program and suggests an improving change. The original source can be seen in Appendix \ref{code-appendix}; the final version on Github at \url{https://github.com/OxfordRSE/covid-19-model}.
 
-\subsection{Break a Long Script Into Distinct Procedures}
+\subsection{Break a Long Script Into Distinct Procedures\label{breaklong}}
 
 Apart from a few \texttt{import} statements and the \texttt{deriv} function defined at line 30, the script does everything at the top level: setting up some constants, the initial conditions of the simulation, running the simulation, then plotting the results and saving an image of the graphs. A first step is to break this into separate functions, so that it's easier to see how each step is implemented and so that we can use the code in other contexts (for example, rendering a table of results instead of a graph).
 
@@ -213,6 +213,46 @@ def deriv(x, t, params):
 \end{lstlisting}
 
 Now it looks clearer that, for example, the change in infected population over time depends on how exposed people become infected and how infected people recover, which lends credibility to the calculations. It doesn't matter so much that the script has become \emph{longer} with these modifications, because (to me, at least; remember that design is subjective) it's become \emph{clearer}.
+
+\section{Working With Multiple Files}
+Having made the changes described above, and additional changes of the same types (breaking long scripts into distinct procedures, and replacing duplicated code with procedures), I've turned the 97--line script in the appendix into\ldots a 145--line script. It's longer! How is that more manageable?
+
+My argument is that the code is easier to work with, to maintain, extend, and fix, because it's better-organised. You can make that organisation more explicit by separating the procedures into different files. Using separate files clearly delineates code with different purposes, giving readers and maintainers less code to search to find the part that they're interested in.
+
+Separating these parts out into different files is the first step toward reuse, because those files can be used in different projects, or even packaged up into libraries and shared with other programmers. The recipe for extracting Python functions into their own file is:
+
+\begin{itemize}
+\item Identify the functions that belong in a separate file. They should be cohesive, in that the functions in one file should all share a similar purpose.
+\item Cut the functions from the original file, and paste them into a new file.
+\item Add an \texttt{import} statement to the top of the original file, importing the functions from the new file. The format is:
+\begin{verbatim}
+  from new_file import function1, function2
+\end{verbatim}
+where \texttt{new\_file} is the name of the file you created, without the \texttt{.py} extension.
+\item Identify any modules imported from the main script that are used in the moved functions, and import them in the new file.
+\end{itemize}
+
+When I broke the script into separate functions in section \ref{breaklong} I ended up with two functions, \texttt{plot\_infection\_rates} and \texttt{save\_png}, related to graphing the results of the simulation. I create a new file, \texttt{graphing.py}, then cut the functions from the main script and paste them into this file. Then in the original script, I add this line at the top:
+
+\begin{verbatim}
+from graphing import plot_infection_rates, save_png
+\end{verbatim}
+
+To use the extracted functions in the original file. When I run the script now, I get an error:
+
+\begin{verbatim}
+NameError: name 'plt' is not defined
+\end{verbatim}
+
+This is because the functions in \texttt{graphing.py} depend on \texttt{matplotlib}, which is imported in the main file but not in the new file. I need to add these imports at the top of \texttt{graphing.py} to provide all of the functions used in that file:
+
+\begin{verbatim}
+import matplotlib.pyplot as plt
+import seaborn as sns
+import numpy as np
+\end{verbatim}
+
+It's worth checking now whether those modules are used in the main script file. \texttt{Numpy} still is, but \texttt{seaborn} and \texttt{matplotlib.pyplot} aren't used any more, so those lines can be removed. This little piece of tidying up gives people more information about the scope of code contained in any file, as they can see from the libraries it uses what sort of facilities it provides. A file that imports \texttt{matplotlib} is probably associated with graphing, for example.
 
 \begin{appendices}
 \section{Original Simulation Code\label{code-appendix}}

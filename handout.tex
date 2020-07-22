@@ -254,6 +254,8 @@ import numpy as np
 
 It's worth checking now whether those modules are used in the main script file. \texttt{Numpy} still is, but \texttt{seaborn} and \texttt{matplotlib.pyplot} aren't used any more, so those lines can be removed. This little piece of tidying up gives people more information about the scope of code contained in any file, as they can see from the libraries it uses what sort of facilities it provides. A file that imports \texttt{matplotlib} is probably associated with graphing, for example.
 
+Importing other people's code works the same as importing your own code from other files, using the \texttt{import} statement. This means you can shrink your code even further, by not writing some parts at all and using existing code to solve your problems. The script already does this, using \texttt{numpy} for working with large data sets, \texttt{scipy} for solving differential equations, and other libraries.
+
 \begin{appendices}
 \section{Original Simulation Code\label{code-appendix}}
 

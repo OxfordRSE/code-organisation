@@ -143,12 +143,24 @@ x_initial = initial_population()
 
 Now it's clearer that \texttt{x\_initial} gets its values from the initialisation code. Notice that I also turned the comment into a Python ``doc string'', so that it's available in Python's interactive help.
 
-When splitting out these functions it's important to look at what data goes into and out of the block of code you're extracting, and ensure that the function you create has parameters for all the inputs and returns the appropriate output. To extract the main equation solver of this model (lines 42 and 43 in the original script), we need to ensure that the initial population, times, and the simulation parameters are available. The function must return the populations in both cases, where social distancing is not applied and where it is 40\% effective.
+When splitting out these functions it's important to look at what data goes into and out of the block of code you're extracting, and ensure that the function you create has parameters for all the inputs and returns the appropriate output. To extract the main equation solver of this model (lines 40--42 in the original script), we need to ensure that the initial population, times, and the simulation parameters are available. The function must return the populations in both cases, where social distancing is not applied and where it is 40\% effective.
 
 \begin{lstlisting}[language=Python]
-def simulate_infection(derivative_function, initial_population, times, social_distance_effectivess, alpha, beta, gamma):
-    with_distancing = odeint(derivative_function, initial_population, times, args=(social_distance_effectivess, alpha, beta, gamma)).T
-    without_distancing = odeint(derivative_function, initial_population, times, args=(0, alpha, beta, gamma)).T
+def simulate_infection(derivative_function,
+    initial_population,
+    times,
+    social_distance_effectivess,
+    alpha,
+    beta,
+    gamma):
+    with_distancing = odeint(derivative_function,
+        initial_population,
+        times,
+        args=(social_distance_effectivess, alpha, beta, gamma)).T
+    without_distancing = odeint(derivative_function,
+        initial_population,
+        times,
+        args=(0, alpha, beta, gamma)).T
     return with_distancing, without_distancing
 \end{lstlisting}
 
@@ -186,13 +198,21 @@ The recipe for replacing duplicated code with a procedure is:
 In Appendix \ref{code-appendix} we see that lines 32 and 33 use the same complicated expression, and that this expression is fundamental to the mathematical expression of the infection model. It's important that this expression be correct and that the same expression be used in both places for the model to be consistent, so it's a good candidate to extract into a shared function. That function, and the changes to the \texttt{deriv} function that result from its use, look like this.
 
 \begin{lstlisting}[language=Python]
-def susceptible_becoming_exposed(social_distancing_effectiveness, t, t_social_distancing_start, beta, susceptible, infected):
-    return -(1-social_distancing_effectiveness*(1 if t >= 7 * t_social_distancing_start else 0)/100)*beta * susceptible * infected
+def susceptible_becoming_exposed(social_distancing_effectiveness, 
+    t,
+    t_social_distancing_start,
+    beta,
+    susceptible,
+    infected):
+    return -(1-social_distancing_effectiveness * \
+        (1 if t >= 7 * t_social_distancing_start else 0)/100) * \
+            beta * susceptible * infected
 
 def deriv(x, t, params):
     s, e, i, r = x
     dsdt = susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i)
-    dedt =  -1 * susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i) - alpha * e
+    dedt =  -1 * susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i)\
+        - alpha * e
     didt = alpha * e - gamma * i
     drdt =  gamma * i
     return [dsdt, dedt, didt, drdt]
@@ -206,7 +226,8 @@ def deriv(x, t, params):
     exposed_becoming_infected = alpha * e
     infected_becoming_recovered = gamma * i
     dsdt = susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i)
-    dedt =  -1 * susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i) - exposed_becoming_infected
+    dedt =  -1 * susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i)\
+        - exposed_becoming_infected
     didt = exposed_becoming_infected - infected_becoming_recovered
     drdt =  infected_becoming_recovered
     return [dsdt, dedt, didt, drdt]
@@ -215,7 +236,7 @@ def deriv(x, t, params):
 Now it looks clearer that, for example, the change in infected population over time depends on how exposed people become infected and how infected people recover, which lends credibility to the calculations. It doesn't matter so much that the script has become \emph{longer} with these modifications, because (to me, at least; remember that design is subjective) it's become \emph{clearer}.
 
 \section{Working With Multiple Files}
-Having made the changes described above, and additional changes of the same types (breaking long scripts into distinct procedures, and replacing duplicated code with procedures), I've turned the 97--line script in the appendix into\ldots a 145--line script. It's longer! How is that more manageable?
+Having made the changes described above, and additional changes of the same types (breaking long scripts into distinct procedures, and replacing duplicated code with procedures), I've turned the 103--line script in the appendix into\ldots a 145--line script. It's longer! How is that more manageable?
 
 My argument is that the code is easier to work with, to maintain, extend, and fix, because it's better-organised. You can make that organisation more explicit by separating the procedures into different files. Using separate files clearly delineates code with different purposes, giving readers and maintainers less code to search to find the part that they're interested in.
 

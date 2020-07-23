@@ -256,6 +256,19 @@ It's worth checking now whether those modules are used in the main script file. 
 
 Importing other people's code works the same as importing your own code from other files, using the \texttt{import} statement. This means you can shrink your code even further, by not writing some parts at all and using existing code to solve your problems. The script already does this, using \texttt{numpy} for working with large data sets, \texttt{scipy} for solving differential equations, and other libraries.
 
+\section{Strategies for Organising Code}
+You've learned the benefits of organising code, and the mechanisms to do so. The examples in this handout have mostly not changed the design of your scripts, except to remove some duplication and introduce new function names. As you get more experienced with code organisation, you may find yourself thinking that greater benefits would come from changing the design of your functions or data structures to improve cohesion or reduce coupling. You may also incorporate these design ideas into future scripts as you're writing them, reducing the need for big reorganisation tasks down the line.
+
+In this section, we'll take a very light overview of two code organisation principles, functional programming and object-oriented programming. The discussions here are just introductions to two software design paradigms which each have decades of thought, criticism, and writing behind them. Knowing how programmers think about the designs of objects and functions will help you to understand how to adopt them in your own code design.
+
+\subsection{Functional Programming}
+Many procedures in computer programs, particularly in scientific codes, look a lot like mathematical functions: they repeatably map values from an input range onto values from an output domain. Given the same inputs, these functions always yield the same outputs. Also, they don't do anything else: no printing to the console, no saving to disk.
+
+Designers using functional programming deliberately make their code functions resemble mathematical functions, and make their scripts into ``pipelines'' that connect a series of functions to perform their desired analyses. Code functions that behave like maths functions are called ``pure'' functions, and have the advantages that their behaviour is easy to understand (the lack of ``side-effects'' like printing or using files means there are no surprises) and they are easy to compose: if the value returned by one function is suitable for input to another, they can be chained together.
+
+Clearly many programs won't do anything interesting unless they \emph{do} interact with the rest of the computer: we need to read input data from a file, and write a graph to the disk. In a functional program these activities are isolated to specific functions that act as ``sources'' that provide data to the analysis pipeline, or ``sinks'' that consume the pipeline results to do something useful with them.
+
+
 \begin{appendices}
 \section{Original Simulation Code\label{code-appendix}}
 

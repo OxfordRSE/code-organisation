@@ -262,12 +262,16 @@ You've learned the benefits of organising code, and the mechanisms to do so. The
 In this section, we'll take a very light overview of two code organisation principles, functional programming and object-oriented programming. The discussions here are just introductions to two software design paradigms which each have decades of thought, criticism, and writing behind them. Knowing how programmers think about the designs of objects and functions will help you to understand how to adopt them in your own code design.
 
 \subsection{Functional Programming}
-Many procedures in computer programs, particularly in scientific codes, look a lot like mathematical functions: they repeatably map values from an input range onto values from an output domain. Given the same inputs, these functions always yield the same outputs. Also, they don't do anything else: no printing to the console, no saving to disk.
+Many procedures in computer programs, particularly in scientific codes, look a lot like mathematical functions: they repeatably map values from an input range onto values from an output domain. Given the same inputs, these functions always yield the same outputs. Also, they don't do anything else: no printing to the console, no saving to disk. For example, the main work of our \textsc{seir} simulation takes the initial population and input parameters, and works out the change in population for the next time step.
 
 Designers using functional programming deliberately make their code functions resemble mathematical functions, and make their scripts into ``pipelines'' that connect a series of functions to perform their desired analyses. Code functions that behave like maths functions are called ``pure'' functions, and have the advantages that their behaviour is easy to understand (the lack of ``side-effects'' like printing or using files means there are no surprises) and they are easy to compose: if the value returned by one function is suitable for input to another, they can be chained together.
 
 Clearly many programs won't do anything interesting unless they \emph{do} interact with the rest of the computer: we need to read input data from a file, and write a graph to the disk. In a functional program these activities are isolated to specific functions that act as ``sources'' that provide data to the analysis pipeline, or ``sinks'' that consume the pipeline results to do something useful with them.
 
+\subsection{Object-Oriented Programming}
+Another way to look at scientific software is that there are ``things'' and there are operations that work on those things. For example, our \textsc{seir} simulation has a population, and it calculates how a disease changes that population.
+
+Designers using object-oriented programming deliberately make their code resemble active agents---objects---that look after their own information and can be asked to perform operations, using or updating that information. A category of objects with similar properties is called a ``class'', and programmers design classes to associate related subsets of the data in their systems with the operations that work with those data. Like functional programming, this makes the code easier to work with: different activities in a program are isolated from each other so you probably only need to investigate the workings of one class at a time.
 
 \begin{appendices}
 \section{Original Simulation Code\label{code-appendix}}

@@ -56,11 +56,16 @@ emphstyle={\color{self}\slshape},
 \maketitle
 
 \section{Introduction}
-You may well have encountered problems associated with developing code with no structure in mind. When all of your program is in a single file it becomes hard to find the part you need to change to fix a bug. When you do make a change, it's difficult to understand all of the ramifications of that change, and whether you have changed everything that needs updating.
+You may well have encountered problems associated with developing code with no structure in mind.
+When all of your program is in a single file it becomes hard to find the part you need to change to fix a bug.
+When you do make a change, it's difficult to understand all of the ramifications of that change, and whether you have changed everything that needs updating.
 
-In this course, you'll learn some basics of code organisation. Firstly you'll learn about some concepts that software engineers use when thinking about how to find parts of a big chunk of code to break out into separate routines, procedures or functions (for the most part, those are words that we're using interchangably in this handout). Then you'll be given practical steps to apply those concepts and organise your code.
+In this course, you'll learn some basics of code organisation.
+Firstly you'll learn about some concepts that software engineers use when thinking about how to find parts of a big chunk of code to break out into separate routines, procedures or functions (for the most part, those are words that we're using interchangably in this handout).
+Then you'll be given practical steps to apply those concepts and organise your code.
 
-With code organised into distinct functions that serve different purposes, you will then learn to separate these functions out into their own files, and import them where you need to use them. This lets you reuse the same functions across different projects, increasing the impact of your software and your efficiency as a programmer.
+With code organised into distinct functions that serve different purposes, you will then learn to separate these functions out into their own files, and import them where you need to use them.
+This lets you reuse the same functions across different projects, increasing the impact of your software and your efficiency as a programmer.
 
 Finally, once you've learned how to import code from other files, you'll learn how to import code from libraries written by other authors, further increasing your efficiency by allowing you to stand on the shoulders of other programming giants.
 
@@ -68,33 +73,61 @@ All of the examples in this handout use the Python programming language.
 
 \section{Designing Well-Organised Software}
 
-There are no hard-and-fast rules in code organisation, so we can't just teach you something like ``split every ten instructions into their own function''. What we'll do is show you the the goals we have and the principles we follow to support those goals. Apply those principles to organising your own projects.
+There are no hard-and-fast rules in code organisation, so we can't just teach you something like ``split every ten instructions into their own function''.
+What we'll do is show you the the goals we have and the principles we follow to support those goals.
+Apply those principles to organising your own projects.
 
 \subsection{Reduce duplication}
 
-A good rule of thumb in organising your code is to reduce the number of times you describe the same procedure or algorithm to the computer. The more times you duplicate the same instructions in your software, the more chances there are that one of them can be erroneous. This is particularly true when you come to make changes. If there are, for example, three places where you define the routine for reading input files, and only remember to update two of them, then your software will exhibit inconsistent behaviour depending on which is used.
+A good rule of thumb in organising your code is to reduce the number of times you describe the same procedure or algorithm to the computer.
+The more times you duplicate the same instructions in your software, the more chances there are that one of them can be erroneous.
+This is particularly true when you come to make changes.
+If there are, for example, three places where you define the routine for reading input files, and only remember to update two of them, then your software will exhibit inconsistent behaviour depending on which is used.
 
-On the other hand, if these three routines are replaced by three calls to a single shared procedure, then all three will get the new behaviour whenever you update the routine. Additionally, this procedure can be used in other contexts where the same input files will be read.
+On the other hand, if these three routines are replaced by three calls to a single shared procedure, then all three will get the new behaviour whenever you update the routine.
+Additionally, this procedure can be used in other contexts where the same input files will be read.
 
 \subsection {Create cohesive routines}
 
-We don't greedily look for duplicated segments of code and split them into routines. The components of our software need to have \textit{cohesion}. By this we mean that they need to have identifiable purposes and behaviour. A procedure that reads data from a \textsc{fits} file into an array can clearly be used in any program that needs to work with \textsc{fits} files. A procedure that reads data from a \textsc{fits} file into an array and writes the current time to the console is not as easy to work with.
+We don't greedily look for duplicated segments of code and split them into routines.
+The components of our software need to have \textit{cohesion}.
+By this we mean that they need to have identifiable purposes and behaviour.
+A procedure that reads data from a \textsc{fits} file into an array can clearly be used in any program that needs to work with \textsc{fits} files.
+A procedure that reads data from a \textsc{fits} file into an array and writes the current time to the console is not as easy to work with.
 
-A convenient heuristic for measuring cohesion is ``do one thing well''. A function that does multiple things is not cohesive. A function that does a small part of something is not cohesive. This is hard to be absolutist about. What one person thinks of as a single function may be to another a small part of something useful, and to another a sequence of multiple steps. Depending on what you're trying to do, ``open a file for reading'' may be a task in itself, or a small part of ``read in the initial state of the simulation''. However, ``read the data in the middle third of the file'' is probably no use to anybody.
+A convenient heuristic for measuring cohesion is ``do one thing well''.
+A function that does multiple things is not cohesive.
+A function that does a small part of something is not cohesive.
+This is hard to be absolutist about.
+What one person thinks of as a single function may be to another a small part of something useful, and to another a sequence of multiple steps.
+Depending on what you're trying to do, ``open a file for reading'' may be a task in itself, or a small part of ``read in the initial state of the simulation''.
+However, ``read the data in the middle third of the file'' is probably no use to anybody.
 
-What this amounts to is that there should be \textit{some} level of abstraction at which the function or routine you're creating can be seen to ``do one thing''. Going back to the example of reading a file, it is certainly true that ``open the file'' is a single operation. But if you put the sequence together ``open the file, create an array, read each line of the file into the array, close the file'', that could also be the recipe for a single operation ``read the input data''. And like any recipe, the order in which you perform the steps matter. Therefore this higher-level routine that is made of a specific sequence of other steps is itself a cohesive operation, so is a good candidate for being its own routine.
+What this amounts to is that there should be \textit{some} level of abstraction at which the function or routine you're creating can be seen to ``do one thing''.
+Going back to the example of reading a file, it is certainly true that ``open the file'' is a single operation.
+But if you put the sequence together ``open the file, create an array, read each line of the file into the array, close the file'', that could also be the recipe for a single operation ``read the input data''.
+And like any recipe, the order in which you perform the steps matter.
+Therefore this higher-level routine that is made of a specific sequence of other steps is itself a cohesive operation, so is a good candidate for being its own routine.
 
 \subsection {Remove unnecessary coupling}
 
-Two train carriages are coupled if they are joined by a connector, with the result that exerting a force on one of them causes the other to move. By analogy, two code functions are coupled if they are joined in such a way that trying to use one of them will have an effect on uses of the other.
+Two train carriages are coupled if they are joined by a connector, with the result that exerting a force on one of them causes the other to move.
+By analogy, two code functions are coupled if they are joined in such a way that trying to use one of them will have an effect on uses of the other.
 
-Sometimes coupling is necessary and even welcome: you can't close a file until you've opened it, for example, so open and close are coupled routines. In this case, the coupling is inherent in the problem being solved, which makes it easy to understand and perhaps even expected. The problems come when routines are coupled because of the way that they are implemented, but the coupling would not be expected based on an understanding of what the routine is supposed to do.
+Sometimes coupling is necessary and even welcome: you can't close a file until you've opened it, for example, so open and close are coupled routines.
+In this case, the coupling is inherent in the problem being solved, which makes it easy to understand and perhaps even expected.
+The problems come when routines are coupled because of the way that they are implemented, but the coupling would not be expected based on an understanding of what the routine is supposed to do.
 
-This points to an important design principle in creating routines: you should be able to understand what a routine does based on its \textit{declaration} (its name, parameters, and documentation) without having to read its \textit{definition} (the list of statements in the routine). If you can, then that understanding stands in for reading a whole chunk of code and makes your program easier to follow.
+This points to an important design principle in creating routines: you should be able to understand what a routine does based on its \textit{declaration} (its name, parameters, and documentation) without having to read its \textit{definition} (the list of statements in the routine).
+If you can, then that understanding stands in for reading a whole chunk of code and makes your program easier to follow.
 
-Surprising coupling frustrates that simplified understanding---it stops you from working out how a routine works without studying its implementation. If you can't calculate the Fourier Transform of a signal using a function called \texttt{calculateFourier()}, and the reason is that the transform routine doesn't work until you've set the printer into colour mode, you're going to have a frustrating time tracking down and fixing that problem. If at some point someone fixes that problem, and now you find that despite calculating a Fourier transform your printouts are still in monochrome, you have another problem to solve.
+Surprising coupling frustrates that simplified understanding---it stops you from working out how a routine works without studying its implementation.
+If you can't calculate the Fourier Transform of a signal using a function called \texttt{calculateFourier()}, and the reason is that the transform routine doesn't work until you've set the printer into colour mode, you're going to have a frustrating time tracking down and fixing that problem.
+If at some point someone fixes that problem, and now you find that despite calculating a Fourier transform your printouts are still in monochrome, you have another problem to solve.
 
-Coupling also restricts reuse. If one routine is coupled to another, it can't be used in another project without bringing that other routine along too, and making the programmer use both in a supported way. If that second routine also has coupling to other parts of the code, they're also coming along for the ride.
+Coupling also restricts reuse.
+If one routine is coupled to another, it can't be used in another project without bringing that other routine along too, and making the programmer use both in a supported way.
+If that second routine also has coupling to other parts of the code, they're also coming along for the ride.
 
 The book ``Code Complete, 2nd Edition'' by Steve McConnell\cite{cc2e} lists a few forms of coupling.
 
@@ -107,27 +140,46 @@ The book ``Code Complete, 2nd Edition'' by Steve McConnell\cite{cc2e} lists a fe
 \item Internal Behaviour Coupling. A function makes use of knowledge of the way another function works, beyond the expectations that could reasonably be derived from the function documentation.
 \end{itemize}
 
-McConnell suggests that the first two forms of coupling are innocuous, and the rest potentially problematic. More simply, greater coupling means more opaque operation and less chance for re-use, so our maxim for creating reusable routines can be ``high cohesiveness, low coupling''.
+McConnell suggests that the first two forms of coupling are innocuous, and the rest potentially problematic.
+More simply, greater coupling means more opaque operation and less chance for re-use, so our maxim for creating reusable routines can be ``high cohesiveness, low coupling''.
 
 \subsection{Remove ``smells''}
 
-Notice in the last section that McConnell said that the forms of coupling identified were \emph{potentially} problematic. There are no hard and fast rules in design, which is a combination of engineering principles and aesthetics. There is no algorithm I can give you for good software design, and no quantitative metric. I can say that you should avoid global variables, but I can also say that you should avoid contorting your code until it's unreadable in the name of excising a global variable.
+Notice in the last section that McConnell said that the forms of coupling identified were \emph{potentially} problematic.
+There are no hard and fast rules in design, which is a combination of engineering principles and aesthetics.
+There is no algorithm I can give you for good software design, and no quantitative metric.
+I can say that you should avoid global variables, but I can also say that you should avoid contorting your code until it's unreadable in the name of excising a global variable.
 
-I could tell you to prefer short functions, but also to prefer making your algorithms explicit and obvious even where that makes functions longer. That means I can't just say ``ten lines per function, and no more''. Reduce coupling, but don't decouple two things that clearly belong together. And so on.
+I could tell you to prefer short functions, but also to prefer making your algorithms explicit and obvious even where that makes functions longer.
+That means I can't just say ``ten lines per function, and no more''.
+Reduce coupling, but don't decouple two things that clearly belong together.
+And so on.
 
-Software engineers talk about code ``smells''\cite{chsmell}. The idea is that something that smells weird isn't necessarily wrong, but definitely warrants further investigation. Good code organisation removes smells, either by fixing the cause of the smell (e.g. reorganising a long function into several shorter ones) or by justifying the existing organisation clearly enough that any concerns are assuaged. That justification can come in the form of an intuitive interface that makes it obvious how to use the functions, and documentation that explains the design choices made and why alternatives were rejected.
+Software engineers talk about code ``smells''\cite{chsmell}.
+The idea is that something that smells weird isn't necessarily wrong, but definitely warrants further investigation.
+Good code organisation removes smells, either by fixing the cause of the smell (e.g.
+reorganising a long function into several shorter ones) or by justifying the existing organisation clearly enough that any concerns are assuaged.
+That justification can come in the form of an intuitive interface that makes it obvious how to use the functions, and documentation that explains the design choices made and why alternatives were rejected.
 
 \section{Organising Existing Code}
 
-In this section, we'll take a small program written in Python and and re-organise it to improve readability. The code models the incidence of a highly-transmissible disease through a University population; a timely example when this was written. Each of the sections explores a different aspect of the program and suggests an improving change. The original source can be seen in Appendix \ref{code-appendix}; the final version on Github at \url{https://github.com/OxfordRSE/covid-19-model}.
+In this section, we'll take a small program written in Python and and re-organise it to improve readability.
+The code models the incidence of a highly-transmissible disease through a University population; a timely example when this was written.
+Each of the sections explores a different aspect of the program and suggests an improving change.
+The original source can be seen in Appendix \ref{code-appendix}; the final version on Github at \url{https://github.com/OxfordRSE/covid-19-model}.
 
 \subsection{Break a Long Script Into Distinct Procedures\label{breaklong}}
 
-Apart from a few \texttt{import} statements and the \texttt{deriv} function defined at line 30, the script does everything at the top level: setting up some constants, the initial conditions of the simulation, running the simulation, then plotting the results and saving an image of the graphs. A first step is to break this into separate functions, so that it's easier to see how each step is implemented and so that we can use the code in other contexts (for example, rendering a table of results instead of a graph).
+Apart from a few \texttt{import} statements and the \texttt{deriv} function defined at line 30, the script does everything at the top level: setting up some constants, the initial conditions of the simulation, running the simulation, then plotting the results and saving an image of the graphs.
+A first step is to break this into separate functions, so that it's easier to see how each step is implemented and so that we can use the code in other contexts (for example, rendering a table of results instead of a graph).
 
-Look for a meaningful step in the process to split out, no matter its size. You can give the resulting procedure a name that explains its purpose, and that procedure is likely only usable in its original context. If you were instead to pick some threshold number of statements, say 10, and break the code every 10 statements, you would have procedures with no independent capability outside the original recipe and it would be hard to identify what each does.
+Look for a meaningful step in the process to split out, no matter its size.
+You can give the resulting procedure a name that explains its purpose, and that procedure is likely only usable in its original context.
+If you were instead to pick some threshold number of statements, say 10, and break the code every 10 statements, you would have procedures with no independent capability outside the original recipe and it would be hard to identify what each does.
 
-As an example, take the initialisation of the population in Appendix \ref{code-appendix}. It's only a few lines: lines 19-23, and line 39. It's a bit of a ``code smell'' that the last line isn't with the rest of the initialisation, so replace all of those lines with a single function.
+As an example, take the initialisation of the population in Appendix \ref{code-appendix}.
+It's only a few lines: lines 19-23, and line 39.
+It's a bit of a ``code smell'' that the last line isn't with the rest of the initialisation, so replace all of those lines with a single function.
 
 \begin{lstlisting}[language=Python]
 def initial_population():
@@ -141,9 +193,12 @@ def initial_population():
 x_initial = initial_population()
 \end{lstlisting}
 
-Now it's clearer that \texttt{x\_initial} gets its values from the initialisation code. Notice that I also turned the comment into a Python ``doc string'', so that it's available in Python's interactive help.
+Now it's clearer that \texttt{x\_initial} gets its values from the initialisation code.
+Notice that I also turned the comment into a Python ``doc string'', so that it's available in Python's interactive help.
 
-When splitting out these functions it's important to look at what data goes into and out of the block of code you're extracting, and ensure that the function you create has parameters for all the inputs and returns the appropriate output. To extract the main equation solver of this model (lines 40--42 in the original script), we need to ensure that the initial population, times, and the simulation parameters are available. The function must return the populations in both cases, where social distancing is not applied and where it is 40\% effective.
+When splitting out these functions it's important to look at what data goes into and out of the block of code you're extracting, and ensure that the function you create has parameters for all the inputs and returns the appropriate output.
+To extract the main equation solver of this model (lines 40--42 in the original script), we need to ensure that the initial population, times, and the simulation parameters are available.
+The function must return the populations in both cases, where social distancing is not applied and where it is 40\% effective.
 
 \begin{lstlisting}[language=Python]
 def simulate_infection(derivative_function,
@@ -178,11 +233,16 @@ To my mind that makes it clearer to see what the program does, and where to look
 
 \subsection{Replace Duplicated Code with Procedure}
 
-Where the same sequence of expressions occurs multiple times in a program, it's likely that there is a single concept being applied multiple times. ``Extracting'' the duplication by writing the duplicated statements into a function, and replacing all of the original duplicate instances with calls to the new function, has two important benefits.
+Where the same sequence of expressions occurs multiple times in a program, it's likely that there is a single concept being applied multiple times.
+``Extracting'' the duplication by writing the duplicated statements into a function, and replacing all of the original duplicate instances with calls to the new function, has two important benefits.
 
-Firstly, by introducing a function, you give yourself the opportunity to name its action which wasn't available before. Readers of the code will find it easier to think about if they get to see what high-level ideas the code is performing, rather than having to work this out by understanding the sequence of expressions.
+Firstly, by introducing a function, you give yourself the opportunity to name its action which wasn't available before.
+Readers of the code will find it easier to think about if they get to see what high-level ideas the code is performing, rather than having to work this out by understanding the sequence of expressions.
 
-Secondly, by ensuring that the algorithm or sequence is only written once in your code, you reduce the amount of work needed to maintain it, modify it, or fix bugs. If you had a sequence of instructions replicated five times across a script and found that it contained a bug, you would need to fix the bug in all five places. You might miss one, or you might get the fix wrong in some places. If the sequence is implemented in one place, fixing that single occurrence addresses problems everywhere it's used.
+Secondly, by ensuring that the algorithm or sequence is only written once in your code, you reduce the amount of work needed to maintain it, modify it, or fix bugs.
+If you had a sequence of instructions replicated five times across a script and found that it contained a bug, you would need to fix the bug in all five places.
+You might miss one, or you might get the fix wrong in some places.
+If the sequence is implemented in one place, fixing that single occurrence addresses problems everywhere it's used.
 
 The recipe for replacing duplicated code with a procedure is:
 
@@ -195,7 +255,9 @@ The recipe for replacing duplicated code with a procedure is:
   \item Repeat the previous two steps for each other instance of the duplicated code.
 \end{itemize}
 
-In Appendix \ref{code-appendix} we see that lines 32 and 33 use the same complicated expression, and that this expression is fundamental to the mathematical expression of the infection model. It's important that this expression be correct and that the same expression be used in both places for the model to be consistent, so it's a good candidate to extract into a shared function. That function, and the changes to the \texttt{deriv} function that result from its use, look like this.
+In Appendix \ref{code-appendix} we see that lines 32 and 33 use the same complicated expression, and that this expression is fundamental to the mathematical expression of the infection model.
+It's important that this expression be correct and that the same expression be used in both places for the model to be consistent, so it's a good candidate to extract into a shared function.
+That function, and the changes to the \texttt{deriv} function that result from its use, look like this.
 
 \begin{lstlisting}[language=Python]
 def susceptible_becoming_exposed(social_distancing_effectiveness, 
@@ -218,7 +280,8 @@ def deriv(x, t, params):
     return [dsdt, dedt, didt, drdt]
 \end{lstlisting}
 
-In fact, looking at the resulting implementation of \texttt{deriv}, it's clear that there's a lot of interrelation between the four calculations, and that rather than exposing this interrelation, the code is hiding it by duplicating the calculations. This duplication can also be removed, in this case not by creating new functions but by introducing new variables to hold the intermediate results.
+In fact, looking at the resulting implementation of \texttt{deriv}, it's clear that there's a lot of interrelation between the four calculations, and that rather than exposing this interrelation, the code is hiding it by duplicating the calculations.
+This duplication can also be removed, in this case not by creating new functions but by introducing new variables to hold the intermediate results.
 
 \begin{lstlisting}[language=Python]
 def deriv(x, t, params):
@@ -233,14 +296,19 @@ def deriv(x, t, params):
     return [dsdt, dedt, didt, drdt]
 \end{lstlisting}
 
-Now it looks clearer that, for example, the change in infected population over time depends on how exposed people become infected and how infected people recover, which lends credibility to the calculations. It doesn't matter so much that the script has become \emph{longer} with these modifications, because (to me, at least; remember that design is subjective) it's become \emph{clearer}.
+Now it looks clearer that, for example, the change in infected population over time depends on how exposed people become infected and how infected people recover, which lends credibility to the calculations.
+It doesn't matter so much that the script has become \emph{longer} with these modifications, because (to me, at least; remember that design is subjective) it's become \emph{clearer}.
 
 \section{Working With Multiple Files}
-Having made the changes described above, and additional changes of the same types (breaking long scripts into distinct procedures, and replacing duplicated code with procedures), I've turned the 103--line script in the appendix into\ldots a 145--line script. It's longer! How is that more manageable?
+Having made the changes described above, and additional changes of the same types (breaking long scripts into distinct procedures, and replacing duplicated code with procedures), I've turned the 103--line script in the appendix into\ldots a 145--line script.
+It's longer! How is that more manageable?
 
-My argument is that the code is easier to work with, to maintain, extend, and fix, because it's better-organised. You can make that organisation more explicit by separating the procedures into different files. Using separate files clearly delineates code with different purposes, giving readers and maintainers less code to search to find the part that they're interested in.
+My argument is that the code is easier to work with, to maintain, extend, and fix, because it's better-organised.
+You can make that organisation more explicit by separating the procedures into different files.
+Using separate files clearly delineates code with different purposes, giving readers and maintainers less code to search to find the part that they're interested in.
 
-Separating these parts out into different files is the first step toward reuse, because those files can be used in different projects, or even packaged up into libraries and shared with other programmers. The recipe for extracting Python functions into their own file is:
+Separating these parts out into different files is the first step toward reuse, because those files can be used in different projects, or even packaged up into libraries and shared with other programmers.
+The recipe for extracting Python functions into their own file is:
 
 \begin{itemize}
 \item Identify the functions that belong in a separate file. They should be cohesive, in that the functions in one file should all share a similar purpose.
@@ -253,7 +321,9 @@ where \texttt{new\_file} is the name of the file you created, without the \textt
 \item Identify any modules imported from the main script that are used in the moved functions, and import them in the new file.
 \end{itemize}
 
-When I broke the script into separate functions in section \ref{breaklong} I ended up with two functions, \texttt{plot\_infection\_rates} and \texttt{save\_png}, related to graphing the results of the simulation. I create a new file, \texttt{graphing.py}, then cut the functions from the main script and paste them into this file. Then in the original script, I add this line at the top:
+When I broke the script into separate functions in section \ref{breaklong} I ended up with two functions, \texttt{plot\_infection\_rates} and \texttt{save\_png}, related to graphing the results of the simulation.
+I create a new file, \texttt{graphing.py}, then cut the functions from the main script and paste them into this file.
+Then in the original script, I add this line at the top:
 
 \begin{verbatim}
 from graphing import plot_infection_rates, save_png
@@ -265,7 +335,8 @@ To use the extracted functions in the original file. When I run the script now, 
 NameError: name 'plt' is not defined
 \end{verbatim}
 
-This is because the functions in \texttt{graphing.py} depend on \texttt{matplotlib}, which is imported in the main file but not in the new file. I need to add these imports at the top of \texttt{graphing.py} to provide all of the functions used in that file:
+This is because the functions in \texttt{graphing.py} depend on \texttt{matplotlib}, which is imported in the main file but not in the new file.
+I need to add these imports at the top of \texttt{graphing.py} to provide all of the functions used in that file:
 
 \begin{verbatim}
 import matplotlib.pyplot as plt
@@ -273,26 +344,44 @@ import seaborn as sns
 import numpy as np
 \end{verbatim}
 
-It's worth checking now whether those modules are used in the main script file. \texttt{Numpy} still is, but \texttt{seaborn} and \texttt{matplotlib.pyplot} aren't used any more, so those lines can be removed. This little piece of tidying up gives people more information about the scope of code contained in any file, as they can see from the libraries it uses what sort of facilities it provides. A file that imports \texttt{matplotlib} is probably associated with graphing, for example.
+It's worth checking now whether those modules are used in the main script file.
+\texttt{Numpy} still is, but \texttt{seaborn} and \texttt{matplotlib.pyplot} aren't used any more, so those lines can be removed.
+This little piece of tidying up gives people more information about the scope of code contained in any file, as they can see from the libraries it uses what sort of facilities it provides.
+A file that imports \texttt{matplotlib} is probably associated with graphing, for example.
 
-Importing other people's code works the same as importing your own code from other files, using the \texttt{import} statement. This means you can shrink your code even further, by not writing some parts at all and using existing code to solve your problems. The script already does this, using \texttt{numpy} for working with large data sets, \texttt{scipy} for solving differential equations, and other libraries.
+Importing other people's code works the same as importing your own code from other files, using the \texttt{import} statement.
+This means you can shrink your code even further, by not writing some parts at all and using existing code to solve your problems.
+The script already does this, using \texttt{numpy} for working with large data sets, \texttt{scipy} for solving differential equations, and other libraries.
 
 \section{Strategies for Organising Code}
-You've learned the benefits of organising code, and the mechanisms to do so. The examples in this handout have mostly not changed the design of your scripts, except to remove some duplication and introduce new function names. As you get more experienced with code organisation, you may find yourself thinking that greater benefits would come from changing the design of your functions or data structures to improve cohesion or reduce coupling. You may also incorporate these design ideas into future scripts as you're writing them, reducing the need for big reorganisation tasks down the line.
+You've learned the benefits of organising code, and the mechanisms to do so.
+The examples in this handout have mostly not changed the design of your scripts, except to remove some duplication and introduce new function names.
+As you get more experienced with code organisation, you may find yourself thinking that greater benefits would come from changing the design of your functions or data structures to improve cohesion or reduce coupling.
+You may also incorporate these design ideas into future scripts as you're writing them, reducing the need for big reorganisation tasks down the line.
 
-In this section, we'll take a very light overview of two code organisation principles, functional programming and object-oriented programming. The discussions here are just introductions to two software design paradigms which each have decades of thought, criticism, and writing behind them. Knowing how programmers think about the designs of objects and functions will help you to understand how to adopt them in your own code design.
+In this section, we'll take a very light overview of two code organisation principles, functional programming and object-oriented programming.
+The discussions here are just introductions to two software design paradigms which each have decades of thought, criticism, and writing behind them.
+Knowing how programmers think about the designs of objects and functions will help you to understand how to adopt them in your own code design.
 
 \subsection{Functional Programming}
-Many procedures in computer programs, particularly in scientific codes, look a lot like mathematical functions: they repeatably map values from an input range onto values from an output domain. Given the same inputs, these functions always yield the same outputs. Also, they don't do anything else: no printing to the console, no saving to disk. For example, the main work of our \textsc{seir} simulation takes the initial population and input parameters, and works out the change in population for the next time step.
+Many procedures in computer programs, particularly in scientific codes, look a lot like mathematical functions: they repeatably map values from an input range onto values from an output domain.
+Given the same inputs, these functions always yield the same outputs.
+Also, they don't do anything else: no printing to the console, no saving to disk.
+For example, the main work of our \textsc{seir} simulation takes the initial population and input parameters, and works out the change in population for the next time step.
 
-Designers using functional programming deliberately make their code functions resemble mathematical functions, and make their scripts into ``pipelines'' that connect a series of functions to perform their desired analyses. Code functions that behave like maths functions are called ``pure'' functions, and have the advantages that their behaviour is easy to understand (the lack of ``side-effects'' like printing or using files means there are no surprises) and they are easy to compose: if the value returned by one function is suitable for input to another, they can be chained together.
+Designers using functional programming deliberately make their code functions resemble mathematical functions, and make their scripts into ``pipelines'' that connect a series of functions to perform their desired analyses.
+Code functions that behave like maths functions are called ``pure'' functions, and have the advantages that their behaviour is easy to understand (the lack of ``side-effects'' like printing or using files means there are no surprises) and they are easy to compose: if the value returned by one function is suitable for input to another, they can be chained together.
 
-Clearly many programs won't do anything interesting unless they \emph{do} interact with the rest of the computer: we need to read input data from a file, and write a graph to the disk. In a functional program these activities are isolated to specific functions that act as ``sources'' that provide data to the analysis pipeline, or ``sinks'' that consume the pipeline results to do something useful with them.
+Clearly many programs won't do anything interesting unless they \emph{do} interact with the rest of the computer: we need to read input data from a file, and write a graph to the disk.
+In a functional program these activities are isolated to specific functions that act as ``sources'' that provide data to the analysis pipeline, or ``sinks'' that consume the pipeline results to do something useful with them.
 
 \subsection{Object-Oriented Programming}
-Another way to look at scientific software is that there are ``things'' and there are operations that work on those things. For example, our \textsc{seir} simulation has a population, and it calculates how a disease changes that population.
+Another way to look at scientific software is that there are ``things'' and there are operations that work on those things.
+For example, our \textsc{seir} simulation has a population, and it calculates how a disease changes that population.
 
-Designers using object-oriented programming deliberately make their code resemble active agents---objects---that look after their own information and can be asked to perform operations, using or updating that information. A category of objects with similar properties is called a ``class'', and programmers design classes to associate related subsets of the data in their systems with the operations that work with those data. Like functional programming, this makes the code easier to work with: different activities in a program are isolated from each other so you probably only need to investigate the workings of one class at a time.
+Designers using object-oriented programming deliberately make their code resemble active agents---objects---that look after their own information and can be asked to perform operations, using or updating that information.
+A category of objects with similar properties is called a ``class'', and programmers design classes to associate related subsets of the data in their systems with the operations that work with those data.
+Like functional programming, this makes the code easier to work with: different activities in a program are isolated from each other so you probably only need to investigate the workings of one class at a time.
 
 \begin{appendices}
 \section{Original Simulation Code\label{code-appendix}}

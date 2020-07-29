@@ -93,10 +93,9 @@ All of the examples in this handout use the Python programming language.
 \section{Designing Well-Organised Software}
 
 There are no hard-and-fast rules in code organisation, so we can't just teach you something like ``split every ten instructions into their own function''.
-What we'll do is show you the the goals we have and the principles we follow to support those goals.
-Apply those principles to organising your own projects.
+What we'll do instead is show you three simple principles you can follow to better organise your research software: \textit{reduce duplication}, \textit{create cohesive routines} and \textit{remove duplication}.
 
-\subsection{Reduce duplication}
+\subsection{Principle 1: reduce ruplication}
 
 A good rule of thumb in organising your code is to reduce the number of times you describe the same procedure or algorithm to the computer.
 The more times you duplicate the same instructions in your software, the more chances there are that one of them can be erroneous.
@@ -106,7 +105,7 @@ If there are, for example, three places where you define the routine for reading
 On the other hand, if these three routines are replaced by three calls to a single shared procedure, then all three will get the new behaviour whenever you update the routine.
 Additionally, this procedure can be used in other contexts where the same input files will be read.
 
-\subsection {Create cohesive routines}
+\subsection {Principle 2: create cohesive routines}
 
 We don't greedily look for duplicated segments of code and split them into routines.
 The components of our software need to have \textit{cohesion}.
@@ -128,7 +127,7 @@ But if you put the sequence together ``open the file, create an array, read each
 And like any recipe, the order in which you perform the steps matter.
 Therefore this higher-level routine that is made of a specific sequence of other steps is itself a cohesive operation, so is a good candidate for being its own routine.
 
-\subsection {Remove unnecessary coupling}
+\subsection {Principle 3: remove unnecessary coupling}
 
 Two train carriages are coupled if they are joined by a connector, with the result that exerting a force on one of them causes the other to move.
 By analogy, two code functions are coupled if they are joined in such a way that trying to use one of them will have an effect on uses of the other.

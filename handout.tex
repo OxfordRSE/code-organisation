@@ -65,8 +65,11 @@ In these cases, code is often developed on the go, with no particular structure 
 You may think that devoting time to structure of you code is not worth the effort, as your focus is the research task (producing a plot for example) and not the software itself.
 In this course you will learn that, whatever the scope and size of your software, the lack of a minimal structure \textit{slows you research down} both in the short run and the long run.
 
+You may well already have encountered problems with developing code with no structure in mind.
 When all of your program is in a single file it becomes hard to find the part you need to change to fix a bug.
-When you do make a change, it's difficult to understand all of the ramifications of that change, and whether you have changed everything that needs updating.
+When several units depend on each other in way that is not expected, it can be tricky to change/update the behaviour of your software.
+It's difficult to understand all of the ramifications of that change.
+Moreover, if parts of your code are duplicated it can be difficult to determine whether you have changed everything that needs updating!
 
 In this course, you'll learn some basics of code organisation.
 Firstly you'll learn about some concepts that software engineers use when thinking about how to find parts of a big chunk of code to break out into separate routines, procedures or functions (for the most part, those are words that we're using interchangably in this handout).

@@ -204,7 +204,7 @@ It's a bit of a ``code smell'' that the last line isn't with the rest of the ini
 
 \begin{lstlisting}[language=Python]
 def initial_population():
-    """initial number of infected and recovered individuals"""
+    """initial number of infectious and recovered individuals"""
     e_initial = n/N
     i_initial = 0.00
     r_initial = 0.00
@@ -286,10 +286,10 @@ def susceptible_becoming_exposed(social_distancing_effectiveness,
     t_social_distancing_start,
     beta,
     susceptible,
-    infected):
+    infectious):
     return -(1-social_distancing_effectiveness * \
         (1 if t >= 7 * t_social_distancing_start else 0)/100) * \
-            beta * susceptible * infected
+            beta * susceptible * infectious
 
 def deriv(x, t, params):
     s, e, i, r = x
@@ -307,17 +307,17 @@ This duplication can also be removed, in this case not by creating new functions
 \begin{lstlisting}[language=Python]
 def deriv(x, t, params):
     s, e, i, r = x
-    exposed_becoming_infected = alpha * e
-    infected_becoming_recovered = gamma * i
+    exposed_becoming_infectious = alpha * e
+    infectious_becoming_recovered = gamma * i
     dsdt = susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i)
     dedt =  -1 * susceptible_becoming_exposed(u, t, t_social_distancing, beta, s, i)\
-        - exposed_becoming_infected
-    didt = exposed_becoming_infected - infected_becoming_recovered
-    drdt =  infected_becoming_recovered
+        - exposed_becoming_infectious
+    didt = exposed_becoming_infectious - infectious_becoming_recovered
+    drdt =  infectious_becoming_recovered
     return [dsdt, dedt, didt, drdt]
 \end{lstlisting}
 
-Now it looks clearer that, for example, the change in infected population over time depends on how exposed people become infected and how infected people recover, which lends credibility to the calculations.
+Now it looks clearer that, for example, the change in infectious population over time depends on how exposed people become infectious and how infectious people recover, which lends credibility to the calculations.
 It doesn't matter so much that the script has become \emph{longer} with these modifications, because (to me, at least; remember that design is subjective) it's become \emph{clearer}.
 
 \section{Working With Multiple Files}
